@@ -1,4 +1,3 @@
-
 agent_name: starter-agent
 version: 1.0.0
 commit_hash: HEAD
@@ -15,11 +14,26 @@ outputs:
   - name: agent_response
     type: text
 
+# --- LLM Provider ---
+# Change 'name' to switch providers: openai | gemini | anthropic
 llm_provider:
   name: openai
   model: gpt-4o-mini
   temperature: 0.7
   max_tokens: 500
+
+# --- Alternative Provider Examples ---
+# llm_provider:
+#   name: gemini
+#   model: gemini-2.5-flash
+#   temperature: 0.7
+#   max_tokens: 500
+#
+# llm_provider:
+#   name: anthropic
+#   model: claude-sonnet-4-20250514
+#   temperature: 0.7
+#   max_tokens: 500
 
 memory:
   type: short_term
@@ -29,9 +43,31 @@ tools:
   - name: calculator
     description: Basic arithmetic operations
 
+# --- Secrets (injected via ENV, never hardcoded) ---
 secrets:
-  - OPENAI_API_KEY
+  - OPENAI_API_KEY       # Required if llm_provider.name = openai
+  # - GEMINI_API_KEY     # Required if llm_provider.name = gemini
+  # - ANTHROPIC_API_KEY  # Required if llm_provider.name = anthropic
   - REDIS_URL
+
+# --- Integrations ---
+integrations:
+  slack:
+    enabled: false
+    secrets:
+      - SLACK_BOT_TOKEN
+      - SLACK_SIGNING_SECRET
+      - SLACK_APP_TOKEN
+  whatsapp:
+    enabled: false
+    secrets:
+      - WHATSAPP_API_TOKEN
+      - WHATSAPP_VERIFY_TOKEN
+      - WHATSAPP_PHONE_NUMBER_ID
+  webhook:
+    enabled: true
+    secrets:
+      - WEBHOOK_SECRET  # Optional, for HMAC verification
 
 guardrails:
   pii_filter: true

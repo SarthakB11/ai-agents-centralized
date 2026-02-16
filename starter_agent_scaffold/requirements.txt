@@ -1,11 +1,31 @@
-
+# Core
 fastapi
 uvicorn
 pydantic
-openai
-redis
+pydantic-settings
 python-dotenv
-promethus-client
+PyYAML
+httpx
+
+# LLM Providers (install only the one you need)
+# openai
+# google-generativeai
+# anthropic
+
+# Integrations (install only the ones you need)
+# slack_bolt
+
+# Memory
+# redis
+
+# Testing
 pytest
 pytest-mock
-PyYAML
+pytest-asyncio
+
+# Security & Quality
+flake8
+bandit
+
+# Observability
+prometheus-client

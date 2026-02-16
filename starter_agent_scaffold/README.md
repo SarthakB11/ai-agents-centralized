@@ -9,38 +9,47 @@ A **compliance-ready** template for building new AI agents. Clone this folder, r
 ```
 starter_agent_scaffold/
 │
-├── agent_spec.yaml            ← Agent identity, inputs/outputs, LLM config, secrets, guardrails
-├── requirements.txt           ← Python dependencies (FastAPI, OpenAI, Redis, pytest, etc.)
-├── README.md                  ← This file
+├── agent_spec.yaml                ← Agent identity, LLM config, integrations, guardrails
+├── requirements.txt               ← Python deps (uncomment providers/integrations you need)
+├── README.md                      ← This file
 │
-├── app/                       ← Core application code
-│   ├── main.py                ← FastAPI entry point with /health and /agent/chat endpoints
-│   ├── config.py              ← Environment-based configuration loader (Pydantic BaseSettings)
-│   ├── agent.py               ← Core agent logic: memory loading → tool routing → LLM call → memory save
+├── app/
+│   ├── main.py                    ← FastAPI entry point (/health, /agent/chat + integration routers)
+│   ├── config.py                  ← Env-based config loader (Pydantic BaseSettings)
+│   ├── agent.py                   ← Core agent: memory → tools → LLM → response
+│   │
+│   ├── services/                  ← LLM Provider Abstraction Layer
+│   │   ├── base_provider.py       ← Abstract base class + LLMResponse dataclass
+│   │   ├── openai_provider.py     ← OpenAI (GPT-4o, GPT-4o-mini, o1, o3-mini)
+│   │   ├── gemini_provider.py     ← Google Gemini (2.5-pro, 2.5-flash, 2.0-flash)
+│   │   ├── anthropic_provider.py  ← Anthropic Claude (Sonnet, Haiku, Opus)
+│   │   └── llm_client.py         ← Unified LLM client + factory (auto-detects from spec)
+│   │
+│   ├── integrations/              ← External Platform Connectors
+│   │   ├── __init__.py
+│   │   ├── slack_integration.py   ← Slack bot (Bolt framework, Socket Mode)
+│   │   ├── whatsapp_integration.py← WhatsApp Cloud API webhook
+│   │   └── webhook_integration.py ← Generic webhook with HMAC + callback support
+│   │
 │   ├── prompts/
-│   │   └── system_prompt.txt  ← Versioned system prompt (never hardcode prompts in code)
+│   │   └── system_prompt.txt      ← Versioned system prompt
 │   ├── tools/
-│   │   └── example_tool.py    ← Example tool (calculator). Add your domain tools here.
+│   │   └── example_tool.py        ← Example tool (calculator)
 │   ├── memory/
-│   │   └── memory_manager.py  ← Session memory (local dict mock; swap for Redis in production)
-│   ├── models/                ← Pydantic schemas for request/response validation
-│   └── services/
-│       └── llm_client.py      ← LLM wrapper: abstracts provider calls, returns output + token count
+│   │   └── memory_manager.py      ← Session memory (mock → swap for Redis)
+│   └── models/                    ← Pydantic schemas
 │
-├── tests/                     ← Test suites
-│   ├── test_agent.py          ← Unit tests: tool correctness, agent structure verification
+├── tests/
+│   ├── test_agent.py              ← Unit tests
 │   └── integration_tests/
-│       └── test_flow.py       ← End-to-end flow test with mocked LLM (no API costs)
+│       └── test_flow.py           ← E2E flow test with mocked LLM
 │
-├── evaluation/                ← Benchmark datasets and scoring scripts (add eval_dataset.json here)
-│
+├── evaluation/                    ← Benchmark datasets & scoring
 ├── infra/
-│   └── Dockerfile             ← Production Docker image (Python 3.9, uvicorn on port 8000)
-│
+│   └── Dockerfile                 ← Production container
 ├── ci/
-│   └── ci_pipeline.yaml       ← GitHub Actions: lint, unit tests, integration tests, spec validation
-│
-└── docs/                      ← Agent-specific architecture docs and changelog
+│   └── ci_pipeline.yaml          ← GitHub Actions CI/CD
+└── docs/                          ← Agent-specific docs
 ```
 
 ---
@@ -52,52 +61,127 @@ starter_agent_scaffold/
 cp -r starter_agent_scaffold/ my-new-agent/
 cd my-new-agent/
 
-# 2. Update agent identity
-#    Edit agent_spec.yaml → change agent_name, owner, tools, etc.
+# 2. Edit agent_spec.yaml — set agent_name, provider, model, etc.
 
-# 3. Install dependencies
+# 3. Install core deps
 pip install -r requirements.txt
 
-# 4. Configure secrets (create .env file)
-echo "OPENAI_API_KEY=sk-..." > .env
-echo "REDIS_URL=redis://localhost:6379" >> .env
+# 4. Install your LLM provider
+pip install openai          # For OpenAI
+# pip install google-generativeai  # For Gemini
+# pip install anthropic      # For Anthropic
 
-# 5. Validate your spec
+# 5. Configure secrets (.env file)
+echo "OPENAI_API_KEY=sk-..." > .env
+
+# 6. Validate spec
 python ../agent_spec_validator.py agent_spec.yaml
 
-# 6. Run the agent
+# 7. Run
 python app/main.py
-# → API at http://localhost:8000
-# → Health check: GET /health
-# → Chat: POST /agent/chat
-
-# 7. Run tests
-pytest tests/
+# → http://localhost:8000/health
+# → POST http://localhost:8000/agent/chat
 ```
 
 ---
 
-## 🔑 Key Files Explained
+## 🤖 Multi-Provider LLM Support
 
-| File | Purpose |
-|------|---------|
-| `agent_spec.yaml` | Declares the agent's identity, capabilities, LLM config, required secrets, and guardrails. Validated by `agent_spec_validator.py`. |
-| `app/main.py` | FastAPI server exposing `/health` (GET) and `/agent/chat` (POST) endpoints. |
-| `app/agent.py` | Core request handler: loads memory → routes to tools → calls LLM → saves memory → returns response. |
-| `app/config.py` | Loads configuration from `.env` using Pydantic `BaseSettings`. Never hardcode secrets. |
-| `app/services/llm_client.py` | Wraps LLM provider calls. Swap the provider here without touching agent logic. |
-| `app/memory/memory_manager.py` | Manages session history. Default is an in-memory dict; replace with Redis for production. |
-| `app/tools/example_tool.py` | Example tool implementation. Add new tools as separate files in `app/tools/`. |
-| `app/prompts/system_prompt.txt` | The system prompt. Version this file and log the version in every execution. |
-| `ci/ci_pipeline.yaml` | GitHub Actions workflow: linting, unit tests, integration tests, and spec validation. |
-| `infra/Dockerfile` | Production-ready container image. |
+Switch providers by changing one line in `agent_spec.yaml`:
+
+```yaml
+# OpenAI
+llm_provider:
+  name: openai
+  model: gpt-4o-mini
+
+# Google Gemini
+llm_provider:
+  name: gemini
+  model: gemini-2.5-flash
+
+# Anthropic Claude  
+llm_provider:
+  name: anthropic
+  model: claude-sonnet-4-20250514
+```
+
+The `LLMClient` auto-detects the provider from the spec and routes through the correct implementation. All providers return a standardized `LLMResponse` with:
+- `output` — Generated text
+- `tokens_input` / `tokens_output` — Token counts
+- `cost_estimate` — USD cost based on model-specific pricing
+- `model` / `error` — Metadata
+
+### Adding a New Provider
+
+1. Create `app/services/my_provider.py` extending `BaseLLMProvider`
+2. Implement `generate()` and `get_provider_name()`
+3. Register it in `llm_client.py`'s `create_provider()` factory
 
 ---
 
-## 🧪 Testing
+## 🔌 Integrations
 
-- **Unit tests** (`tests/test_agent.py`): Validate individual components (tools, agent structure).
-- **Integration tests** (`tests/integration_tests/test_flow.py`): Test the full request flow with mocked LLM calls — no API costs.
+### Slack Bot
+
+```bash
+pip install slack_bolt
+```
+
+```env
+SLACK_BOT_TOKEN=xoxb-...
+SLACK_SIGNING_SECRET=...
+SLACK_APP_TOKEN=xapp-...   # For Socket Mode
+```
+
+```bash
+python -m app.integrations.slack_integration
+```
+
+Supports: `@mention` in channels + direct messages.
+
+---
+
+### WhatsApp (Meta Cloud API)
+
+```env
+WHATSAPP_API_TOKEN=...
+WHATSAPP_VERIFY_TOKEN=my-verify-token
+WHATSAPP_PHONE_NUMBER_ID=...
+```
+
+Webhook automatically registered at `/webhook/whatsapp`. Point Meta's webhook config to your domain.
+
+---
+
+### Generic Webhook
+
+Any system can POST to `/webhook/inbound`:
+
+```json
+{
+  "input": "Hello, agent!",
+  "session_id": "external-session-123",
+  "callback_url": "https://my-system.com/callback"  
+}
+```
+
+Optional HMAC-SHA256 verification via `X-Webhook-Signature` header + `WEBHOOK_SECRET` env var.
+
+---
+
+## 🔑 Key Files
+
+| File | Purpose |
+|------|---------|
+| `agent_spec.yaml` | Agent identity, LLM provider, integrations, guardrails |
+| `app/services/llm_client.py` | Unified LLM client with provider auto-detection |
+| `app/services/base_provider.py` | Abstract interface all providers implement |
+| `app/integrations/slack_integration.py` | Slack bot via Bolt + Socket Mode |
+| `app/integrations/whatsapp_integration.py` | WhatsApp Cloud API webhook handler |
+| `app/integrations/webhook_integration.py` | Generic webhook with HMAC + callback |
+| `app/agent.py` | Core agent logic |
+| `app/config.py` | Environment-based settings (all secrets) |
 
 ---
 
