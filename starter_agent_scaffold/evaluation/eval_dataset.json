@@ -1,0 +1,36 @@
+{
+    "description": "Sample evaluation dataset for the starter agent",
+    "version": "1.0.0",
+    "test_cases": [
+        {
+            "input": "calculate add 10 5",
+            "expected_output": "15",
+            "category": "tool_usage",
+            "difficulty": "easy"
+        },
+        {
+            "input": "calculate multiply 7 8",
+            "expected_output": "56",
+            "category": "tool_usage",
+            "difficulty": "easy"
+        },
+        {
+            "input": "calculate divide 100 4",
+            "expected_output": "25",
+            "category": "tool_usage",
+            "difficulty": "easy"
+        },
+        {
+            "input": "What is the capital of France?",
+            "expected_output": "Paris",
+            "category": "general_knowledge",
+            "difficulty": "easy"
+        },
+        {
+            "input": "Summarize the purpose of an AI agent in one sentence.",
+            "expected_output": "An AI agent is a software system that uses language models to autonomously perform tasks on behalf of users.",
+            "category": "comprehension",
+            "difficulty": "medium"
+        }
+    ]
+}
