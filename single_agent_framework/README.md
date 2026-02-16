@@ -1,4 +1,4 @@
-# AI Agent SDK
+# Single Agent Framework
 
 Shared framework for building standardized AI agents at Beatroute.
 
@@ -6,19 +6,19 @@ Shared framework for building standardized AI agents at Beatroute.
 
 ```bash
 # From this repo
-pip install -e ./ai_agent_sdk
+pip install -e ./single_agent_framework
 
 # With specific provider
-pip install -e "./ai_agent_sdk[openai]"
-pip install -e "./ai_agent_sdk[gemini]"
-pip install -e "./ai_agent_sdk[all]"
+pip install -e "./single_agent_framework[openai]"
+pip install -e "./single_agent_framework[gemini]"
+pip install -e "./single_agent_framework[all]"
 ```
 
 ## Usage
 
 ```python
-from ai_agent_sdk import BaseAgent
-from ai_agent_sdk.tools import calculator, web_search
+from single_agent_framework import BaseAgent
+from single_agent_framework.tools import calculator, web_search
 
 class MyAgent(BaseAgent):
     def setup(self):
@@ -64,7 +64,7 @@ def run(query: str) -> dict:
 
 ### Custom Provider
 ```python
-from ai_agent_sdk.providers import BaseLLMProvider, LLMResponse
+from single_agent_framework.providers import BaseLLMProvider, LLMResponse
 
 class MyProvider(BaseLLMProvider):
     def generate(self, messages, **kwargs):

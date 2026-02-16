@@ -10,7 +10,7 @@ This agent only contains YOUR custom logic. Everything else
 (LLM providers, guardrails, observability, tools) comes from the SDK.
 """
 
-from ai_agent_sdk import BaseAgent
+from single_agent_framework import BaseAgent
 from typing import Optional, Dict, List
 
 

@@ -8,7 +8,7 @@ for all AI products built by Beatroute.
 
 ```
 ├── docs/                        Specification documents
-├── ai_agent_sdk/                Shared SDK (pip installable)
+├── single_agent_framework/      Shared framework for single agents (pip installable)
 ├── starter_agent_scaffold/      Example thin agent
 └── agent_spec_validator.py      Spec validation CLI
 ```
@@ -17,7 +17,7 @@ for all AI products built by Beatroute.
 
 ```bash
 # 1. Install the SDK
-pip install -e ./ai_agent_sdk
+pip install -e ./single_agent_framework
 
 # 2. Copy the starter scaffold
 cp -r starter_agent_scaffold/ my_new_agent/

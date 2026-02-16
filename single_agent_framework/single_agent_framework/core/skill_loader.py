@@ -42,17 +42,17 @@ logger = logging.getLogger(__name__)
 
 BUILTIN_SKILLS: Dict[str, Dict[str, str]] = {
     # Tools
-    "calculator":       {"type": "tool",        "module": "ai_agent_sdk.tools.calculator",       "description": "Arithmetic operations — add, subtract, multiply, divide"},
-    "web_search":       {"type": "tool",        "module": "ai_agent_sdk.tools.web_search",       "description": "Search the web via Tavily or SerpAPI"},
-    "database_lookup":  {"type": "tool",        "module": "ai_agent_sdk.tools.database_lookup",  "description": "Read-only SQL queries on PostgreSQL/MySQL"},
-    "http_request":     {"type": "tool",        "module": "ai_agent_sdk.tools.http_request",     "description": "Make HTTP GET/POST/PUT requests to APIs"},
-    "email_sender":     {"type": "tool",        "module": "ai_agent_sdk.tools.email_sender",     "description": "Send emails via SMTP"},
-    "file_parser":      {"type": "tool",        "module": "ai_agent_sdk.tools.file_parser",      "description": "Extract text from PDF, DOCX, CSV, Excel, TXT"},
+    "calculator":       {"type": "tool",        "module": "single_agent_framework.tools.calculator",       "description": "Arithmetic operations — add, subtract, multiply, divide"},
+    "web_search":       {"type": "tool",        "module": "single_agent_framework.tools.web_search",       "description": "Search the web via Tavily or SerpAPI"},
+    "database_lookup":  {"type": "tool",        "module": "single_agent_framework.tools.database_lookup",  "description": "Read-only SQL queries on PostgreSQL/MySQL"},
+    "http_request":     {"type": "tool",        "module": "single_agent_framework.tools.http_request",     "description": "Make HTTP GET/POST/PUT requests to APIs"},
+    "email_sender":     {"type": "tool",        "module": "single_agent_framework.tools.email_sender",     "description": "Send emails via SMTP"},
+    "file_parser":      {"type": "tool",        "module": "single_agent_framework.tools.file_parser",      "description": "Extract text from PDF, DOCX, CSV, Excel, TXT"},
 
     # Integrations
-    "webhook":          {"type": "integration", "module": "ai_agent_sdk.integrations.webhook",   "description": "Generic inbound webhook with HMAC verification"},
-    "whatsapp":         {"type": "integration", "module": "ai_agent_sdk.integrations.whatsapp",  "description": "WhatsApp Cloud API two-way messaging"},
-    "slack":            {"type": "integration", "module": "ai_agent_sdk.integrations.slack",     "description": "Slack bot via Socket Mode"},
+    "webhook":          {"type": "integration", "module": "single_agent_framework.integrations.webhook",   "description": "Generic inbound webhook with HMAC verification"},
+    "whatsapp":         {"type": "integration", "module": "single_agent_framework.integrations.whatsapp",  "description": "WhatsApp Cloud API two-way messaging"},
+    "slack":            {"type": "integration", "module": "single_agent_framework.integrations.slack",     "description": "Slack bot via Socket Mode"},
 }
 
 

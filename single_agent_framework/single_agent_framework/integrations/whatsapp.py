@@ -21,7 +21,7 @@ def create_whatsapp_router(agent, prefix: str = "/webhook/whatsapp") -> APIRoute
     Create a WhatsApp webhook router wired to the given agent.
 
     Usage:
-        from ai_agent_sdk.integrations import create_whatsapp_router
+        from single_agent_framework.integrations import create_whatsapp_router
         app.include_router(create_whatsapp_router(my_agent))
     """
     router = APIRouter(prefix=prefix, tags=["WhatsApp"])

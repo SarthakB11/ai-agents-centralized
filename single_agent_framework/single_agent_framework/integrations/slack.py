@@ -13,7 +13,7 @@ def create_slack_bot(agent):
     Create and return a Slack Bolt app wired to the given agent.
 
     Usage:
-        from ai_agent_sdk.integrations.slack import create_slack_bot
+        from single_agent_framework.integrations.slack import create_slack_bot
         bot = create_slack_bot(my_agent)
         bot.start()  # Starts Socket Mode
     """

@@ -11,14 +11,14 @@ import logging
 from abc import ABC
 from typing import Optional, List, Dict, Any
 
-from ai_agent_sdk.providers.llm_client import LLMClient, create_provider
-from ai_agent_sdk.providers.base_provider import BaseLLMProvider, LLMResponse
-from ai_agent_sdk.core.tool_router import ToolRouter
-from ai_agent_sdk.core.memory import MemoryManager
-from ai_agent_sdk.core.skill_loader import SkillLoader, Skill
-from ai_agent_sdk.services.guardrails import Guardrails
-from ai_agent_sdk.services.observability import StructuredLogger, new_trace
-from ai_agent_sdk.services.logging import setup_logging, set_request_context, clear_request_context, get_logger
+from single_agent_framework.providers.llm_client import LLMClient, create_provider
+from single_agent_framework.providers.base_provider import BaseLLMProvider, LLMResponse
+from single_agent_framework.core.tool_router import ToolRouter
+from single_agent_framework.core.memory import MemoryManager
+from single_agent_framework.core.skill_loader import SkillLoader, Skill
+from single_agent_framework.services.guardrails import Guardrails
+from single_agent_framework.services.observability import StructuredLogger, new_trace
+from single_agent_framework.services.logging import setup_logging, set_request_context, clear_request_context, get_logger
 
 logger = logging.getLogger(__name__)
 

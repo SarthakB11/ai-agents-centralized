@@ -1,9 +1,9 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="ai-agent-sdk",
+    name="single-agent-framework",
     version="1.0.0",
-    description="Shared SDK for building standardized AI agents",
+    description="Shared framework for building standardized single AI agents",
     author="Platform Team",
     packages=find_packages(),
     python_requires=">=3.9",

@@ -1,7 +1,7 @@
 """Anthropic Claude LLM Provider."""
 
 from typing import List, Dict
-from ai_agent_sdk.providers.base_provider import BaseLLMProvider, LLMResponse
+from single_agent_framework.providers.base_provider import BaseLLMProvider, LLMResponse
 
 try:
     import anthropic

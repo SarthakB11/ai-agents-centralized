@@ -5,7 +5,7 @@ LLM Client — Unified interface with provider factory.
 import os
 import yaml
 from typing import Optional, List, Dict
-from ai_agent_sdk.providers.base_provider import BaseLLMProvider, LLMResponse
+from single_agent_framework.providers.base_provider import BaseLLMProvider, LLMResponse
 
 
 def _load_provider_from_spec(spec_path: str = "agent_spec.yaml") -> dict:
@@ -38,21 +38,21 @@ def create_provider(
         key = api_key or os.getenv("OPENAI_API_KEY")
         if not key:
             raise ValueError("OPENAI_API_KEY not set")
-        from ai_agent_sdk.providers.openai_provider import OpenAIProvider
+        from single_agent_framework.providers.openai_provider import OpenAIProvider
         return OpenAIProvider(api_key=key, model=mdl, temperature=temp, max_tokens=max_tok)
 
     elif name == "gemini":
         key = api_key or os.getenv("GEMINI_API_KEY")
         if not key:
             raise ValueError("GEMINI_API_KEY not set")
-        from ai_agent_sdk.providers.gemini_provider import GeminiProvider
+        from single_agent_framework.providers.gemini_provider import GeminiProvider
         return GeminiProvider(api_key=key, model=mdl, temperature=temp, max_tokens=max_tok)
 
     elif name == "anthropic":
         key = api_key or os.getenv("ANTHROPIC_API_KEY")
         if not key:
             raise ValueError("ANTHROPIC_API_KEY not set")
-        from ai_agent_sdk.providers.anthropic_provider import AnthropicProvider
+        from single_agent_framework.providers.anthropic_provider import AnthropicProvider
         return AnthropicProvider(api_key=key, model=mdl, temperature=temp, max_tokens=max_tok)
 
     else:

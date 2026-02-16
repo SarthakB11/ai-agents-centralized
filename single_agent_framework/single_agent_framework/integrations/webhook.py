@@ -26,7 +26,7 @@ def create_webhook_router(agent, prefix: str = "/webhook") -> APIRouter:
     Create a webhook router wired to the given agent instance.
 
     Usage:
-        from ai_agent_sdk.integrations import create_webhook_router
+        from single_agent_framework.integrations import create_webhook_router
         app.include_router(create_webhook_router(my_agent))
     """
     router = APIRouter(prefix=prefix, tags=["Webhook"])

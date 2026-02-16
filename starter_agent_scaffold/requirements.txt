@@ -2,8 +2,8 @@
 # The SDK provides all framework functionality.
 # Only list agent-specific dependencies here.
 
-# Core SDK (install from local path or internal PyPI)
--e ../ai_agent_sdk
+# Core Framework (install from local path or internal PyPI)
+-e ../single_agent_framework
 
 # FastAPI for serving
 fastapi>=0.100.0

@@ -1,12 +1,12 @@
 # Starter Agent
 
-A minimal agent built on the **AI Agent SDK**. Copy this directory to create a new agent.
+A minimal agent built on the **Single Agent Framework**. Copy this directory to create a new agent.
 
 ## Quick Start
 
 ```bash
 # 1. Install the SDK
-pip install -e ../ai_agent_sdk
+pip install -e ../single_agent_framework
 
 # 2. Install agent dependencies
 pip install -r requirements.txt
@@ -32,7 +32,7 @@ uvicorn main:app --reload
 ## Architecture
 
 ```
-Your Agent (this dir)          AI Agent SDK (shared)
+Your Agent (this dir)          Single Agent Framework (shared)
 ┌──────────────────┐          ┌──────────────────────────┐
 │ agent.py         │──uses──▶ │ BaseAgent                │
 │ main.py          │          │ LLM Providers (OpenAI,   │
