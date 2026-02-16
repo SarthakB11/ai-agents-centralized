@@ -97,3 +97,12 @@ async def reload_skills():
 async def list_skills():
     """List all loaded skills."""
     return agent.get_skills_summary()
+
+@app.get("/agent/available-skills")
+async def available_skills():
+    """List all built-in skills available in the SDK (whether or not they're enabled)."""
+    from ai_agent_sdk.core.skill_loader import SkillLoader
+    return {
+        "available": SkillLoader.list_available_skills(),
+        "note": "Create a YAML file in skills/ with 'name' and 'enabled: true' to activate any of these.",
+    }

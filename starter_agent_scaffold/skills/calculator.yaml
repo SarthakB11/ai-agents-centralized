@@ -1,10 +1,3 @@
-# Calculator Tool
-# Drop this file in skills/ to enable, delete to disable.
-
+# Calculator — arithmetic operations
 name: calculator
-type: tool
-module: ai_agent_sdk.tools.calculator
 enabled: true
-description: Perform basic arithmetic — add, subtract, multiply, divide.
-config:
-  precision: 2

@@ -1,11 +1,3 @@
-# Web Search Tool
-# Uses Tavily or SerpAPI to search the web.
-# Requires TAVILY_API_KEY or SERP_API_KEY in .env
-
+# Web Search — Tavily or SerpAPI
 name: web_search
-type: tool
-module: ai_agent_sdk.tools.web_search
 enabled: true
-description: Search the web for real-time information using Tavily or SerpAPI.
-config:
-  default_results: 5

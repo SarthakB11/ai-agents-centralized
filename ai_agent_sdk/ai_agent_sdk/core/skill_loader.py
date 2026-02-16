@@ -1,20 +1,25 @@
 """
 Skill Loader — Auto-discover and register skills from YAML files.
 
-Skills are YAML files in a `skills/` directory. Each file defines a
-skill (tool, integration, MCP, function) that the agent can use.
+Built-in skills are shipped with the SDK. You don't need to write Python code.
+Just drop a YAML file in skills/ and the SDK does the rest.
 
 Adding a skill   = drop a YAML file in skills/
 Removing a skill = delete the YAML file
+Disable a skill  = set `enabled: false`
 
-Skill YAML format:
+Minimal YAML for a built-in skill:
     name: calculator
-    type: tool                  # tool | integration | mcp | function
     enabled: true
-    module: ai_agent_sdk.tools.calculator
-    description: Arithmetic operations
+
+Full YAML for a custom skill:
+    name: my_custom_tool
+    type: tool
+    module: my_app.tools.custom    # Only needed for custom skills
+    enabled: true
+    description: Does something amazing
     config:
-      precision: 2
+      key: value
 """
 
 import os
@@ -29,6 +34,28 @@ import yaml
 logger = logging.getLogger(__name__)
 
 
+# ──────────────────────────────────────────────────────────────
+# Built-in Skill Registry
+# The SDK ships these. Users just reference them by name in YAML.
+# No Python code needed.
+# ──────────────────────────────────────────────────────────────
+
+BUILTIN_SKILLS: Dict[str, Dict[str, str]] = {
+    # Tools
+    "calculator":       {"type": "tool",        "module": "ai_agent_sdk.tools.calculator",       "description": "Arithmetic operations — add, subtract, multiply, divide"},
+    "web_search":       {"type": "tool",        "module": "ai_agent_sdk.tools.web_search",       "description": "Search the web via Tavily or SerpAPI"},
+    "database_lookup":  {"type": "tool",        "module": "ai_agent_sdk.tools.database_lookup",  "description": "Read-only SQL queries on PostgreSQL/MySQL"},
+    "http_request":     {"type": "tool",        "module": "ai_agent_sdk.tools.http_request",     "description": "Make HTTP GET/POST/PUT requests to APIs"},
+    "email_sender":     {"type": "tool",        "module": "ai_agent_sdk.tools.email_sender",     "description": "Send emails via SMTP"},
+    "file_parser":      {"type": "tool",        "module": "ai_agent_sdk.tools.file_parser",      "description": "Extract text from PDF, DOCX, CSV, Excel, TXT"},
+
+    # Integrations
+    "webhook":          {"type": "integration", "module": "ai_agent_sdk.integrations.webhook",   "description": "Generic inbound webhook with HMAC verification"},
+    "whatsapp":         {"type": "integration", "module": "ai_agent_sdk.integrations.whatsapp",  "description": "WhatsApp Cloud API two-way messaging"},
+    "slack":            {"type": "integration", "module": "ai_agent_sdk.integrations.slack",     "description": "Slack bot via Socket Mode"},
+}
+
+
 @dataclass
 class Skill:
     """Represents a loaded skill."""
@@ -38,20 +65,24 @@ class Skill:
     description: str = ""
     enabled: bool = True
     config: Dict[str, Any] = field(default_factory=dict)
-    module: Any = None              # The loaded Python module/object
-    source_file: str = ""           # Path to the YAML that defined it
+    module: Any = None
+    source_file: str = ""
+    is_builtin: bool = False
 
 
 class SkillLoader:
     """
     Discovers, validates, and loads skills from YAML files.
 
-    Usage:
-        loader = SkillLoader("skills/")
-        loader.load_all()
+    Built-in skills only need a name + enabled flag:
+        name: calculator
+        enabled: true
 
-        for skill in loader.get_tools():
-            agent.register_tool(skill.name, skill.module)
+    Custom skills need a module path:
+        name: my_tool
+        type: tool
+        module: my_app.tools.my_tool
+        enabled: true
     """
 
     VALID_TYPES = {"tool", "integration", "mcp", "function"}
@@ -64,26 +95,26 @@ class SkillLoader:
     # --- Discovery & Loading ---
 
     def load_all(self) -> "SkillLoader":
-        """
-        Scan the skills directory, parse all YAML files, and load modules.
-        Returns self for chaining.
-        """
+        """Scan skills/, parse YAML files, resolve modules, and load."""
         if not os.path.isdir(self.skills_dir):
             logger.warning(f"Skills directory not found: {self.skills_dir}")
             return self
 
-        yaml_files = glob.glob(os.path.join(self.skills_dir, "*.yaml"))
-        yaml_files += glob.glob(os.path.join(self.skills_dir, "*.yml"))
+        yaml_files = sorted(
+            glob.glob(os.path.join(self.skills_dir, "*.yaml"))
+            + glob.glob(os.path.join(self.skills_dir, "*.yml"))
+        )
 
         logger.info(f"📂 Scanning {self.skills_dir}/ — found {len(yaml_files)} skill file(s)")
 
-        for filepath in sorted(yaml_files):
+        for filepath in yaml_files:
             self._load_skill_file(filepath)
 
         loaded = [s.name for s in self.skills.values() if s.enabled]
         disabled = [s.name for s in self.skills.values() if not s.enabled]
 
-        logger.info(f"✅ Skills loaded: {loaded}")
+        if loaded:
+            logger.info(f"✅ Skills loaded: {loaded}")
         if disabled:
             logger.info(f"⏸️  Skills disabled: {disabled}")
         if self._errors:
@@ -93,7 +124,7 @@ class SkillLoader:
         return self
 
     def _load_skill_file(self, filepath: str):
-        """Parse a single YAML skill file and load its module."""
+        """Parse a single YAML skill file."""
         filename = os.path.basename(filepath)
         try:
             with open(filepath, "r", encoding="utf-8") as f:
@@ -103,39 +134,51 @@ class SkillLoader:
                 self._errors.append(f"{filename}: Empty or invalid YAML")
                 return
 
-            # Validate required fields
             name = data.get("name")
-            skill_type = data.get("type")
-            module_path = data.get("module")
-
             if not name:
                 self._errors.append(f"{filename}: Missing 'name' field")
                 return
+
+            # ── Resolve from built-in registry ──
+            builtin = BUILTIN_SKILLS.get(name)
+            is_builtin = builtin is not None
+
+            # Type: explicit > builtin > error
+            skill_type = data.get("type") or (builtin["type"] if builtin else None)
             if not skill_type:
-                self._errors.append(f"{filename}: Missing 'type' field")
+                self._errors.append(f"{filename}: Missing 'type' — and '{name}' is not a built-in skill")
                 return
             if skill_type not in self.VALID_TYPES:
-                self._errors.append(f"{filename}: Invalid type '{skill_type}'. Must be one of {self.VALID_TYPES}")
+                self._errors.append(f"{filename}: Invalid type '{skill_type}'. Must be: {self.VALID_TYPES}")
                 return
+
+            # Module: explicit > builtin > error
+            module_path = data.get("module") or (builtin["module"] if builtin else None)
             if not module_path:
-                self._errors.append(f"{filename}: Missing 'module' field")
+                self._errors.append(
+                    f"{filename}: Missing 'module' — and '{name}' is not a built-in skill. "
+                    f"Custom skills need: module: my_app.tools.my_tool"
+                )
                 return
+
+            # Description: explicit > builtin > default
+            description = data.get("description") or (builtin.get("description", "") if builtin else "")
 
             skill = Skill(
                 name=name,
                 type=skill_type,
                 module_path=module_path,
-                description=data.get("description", ""),
+                description=description,
                 enabled=data.get("enabled", True),
                 config=data.get("config", {}),
                 source_file=filepath,
+                is_builtin=is_builtin,
             )
 
-            # Only load module if enabled
             if skill.enabled:
                 skill.module = self._import_module(module_path, filename)
                 if skill.module is None:
-                    return  # Error already logged
+                    return
 
             self.skills[name] = skill
 
@@ -158,67 +201,67 @@ class SkillLoader:
     # --- Querying ---
 
     def get_all(self, enabled_only: bool = True) -> List[Skill]:
-        """Get all skills, optionally filtered to enabled only."""
         skills = list(self.skills.values())
-        if enabled_only:
-            skills = [s for s in skills if s.enabled]
-        return skills
+        return [s for s in skills if s.enabled] if enabled_only else skills
 
     def get_by_type(self, skill_type: str, enabled_only: bool = True) -> List[Skill]:
-        """Get skills by type (tool, integration, mcp, function)."""
         return [s for s in self.get_all(enabled_only) if s.type == skill_type]
 
     def get_tools(self) -> List[Skill]:
-        """Get all enabled tool skills."""
         return self.get_by_type("tool")
 
     def get_integrations(self) -> List[Skill]:
-        """Get all enabled integration skills."""
         return self.get_by_type("integration")
 
     def get_mcps(self) -> List[Skill]:
-        """Get all enabled MCP skills."""
         return self.get_by_type("mcp")
 
     def get_functions(self) -> List[Skill]:
-        """Get all enabled function skills."""
         return self.get_by_type("function")
 
     def get(self, name: str) -> Optional[Skill]:
-        """Get a specific skill by name."""
         return self.skills.get(name)
 
     def has(self, name: str) -> bool:
-        """Check if a skill is loaded and enabled."""
         skill = self.skills.get(name)
         return skill is not None and skill.enabled
 
     def get_errors(self) -> List[str]:
-        """Get list of loading errors."""
         return self._errors
 
     # --- Hot Reload ---
 
     def reload(self) -> "SkillLoader":
-        """Re-scan the skills directory. New files are picked up, deleted files are dropped."""
+        """Re-scan skills/. New files picked up, deleted files dropped."""
         self.skills.clear()
         self._errors.clear()
         return self.load_all()
 
+    # --- Registry Info ---
+
+    @staticmethod
+    def list_available_skills() -> Dict[str, Dict]:
+        """List all built-in skills available in the SDK."""
+        return {
+            name: {"type": info["type"], "description": info.get("description", "")}
+            for name, info in BUILTIN_SKILLS.items()
+        }
+
     # --- Summary ---
 
     def summary(self) -> Dict:
-        """Get a summary of loaded skills."""
         return {
             "total": len(self.skills),
             "enabled": len([s for s in self.skills.values() if s.enabled]),
             "disabled": len([s for s in self.skills.values() if not s.enabled]),
-            "by_type": {
-                t: len(self.get_by_type(t)) for t in self.VALID_TYPES
-            },
+            "by_type": {t: len(self.get_by_type(t)) for t in self.VALID_TYPES},
             "errors": len(self._errors),
             "skills": [
-                {"name": s.name, "type": s.type, "enabled": s.enabled, "module": s.module_path}
+                {
+                    "name": s.name, "type": s.type,
+                    "enabled": s.enabled, "builtin": s.is_builtin,
+                    "description": s.description,
+                }
                 for s in self.skills.values()
             ],
         }

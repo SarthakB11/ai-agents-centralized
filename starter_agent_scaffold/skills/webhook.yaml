@@ -1,11 +1,5 @@
-# Webhook Integration
-# Generic inbound webhook endpoint.
-# Optional: Set WEBHOOK_SECRET in .env for signature verification.
-
+# Webhook — inbound webhook endpoint
 name: webhook
-type: integration
-module: ai_agent_sdk.integrations.webhook
 enabled: true
-description: Receive inbound webhooks with optional HMAC signature verification.
 config:
   prefix: /webhook
