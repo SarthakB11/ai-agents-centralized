@@ -1,19 +1,13 @@
-"""
-Anthropic Claude LLM Provider.
-
-Supports: claude-sonnet-4-20250514, claude-3-5-haiku, claude-3-opus, etc.
-"""
+"""Anthropic Claude LLM Provider."""
 
 from typing import List, Dict
-from app.services.base_provider import BaseLLMProvider, LLMResponse
+from ai_agent_sdk.providers.base_provider import BaseLLMProvider, LLMResponse
 
 try:
     import anthropic
 except ImportError:
     anthropic = None
 
-
-# Approximate pricing per 1K tokens (USD)
 ANTHROPIC_PRICING = {
     "claude-sonnet-4-20250514": {"input": 0.003, "output": 0.015},
     "claude-3-5-haiku-20241022": {"input": 0.001, "output": 0.005},
@@ -22,17 +16,14 @@ ANTHROPIC_PRICING = {
 
 
 class AnthropicProvider(BaseLLMProvider):
-    """Anthropic Claude LLM Provider."""
-
     def __init__(self, api_key: str, model: str = "claude-sonnet-4-20250514", **kwargs):
         super().__init__(model=model, **kwargs)
         if anthropic is None:
-            raise ImportError("anthropic package not installed. Run: pip install anthropic")
+            raise ImportError("anthropic not installed. Run: pip install anthropic")
         self.client = anthropic.Anthropic(api_key=api_key)
 
     def generate(self, messages: List[Dict[str, str]], **kwargs) -> LLMResponse:
         try:
-            # Extract system message
             system_msg = ""
             chat_messages = []
             for msg in messages:
@@ -48,16 +39,11 @@ class AnthropicProvider(BaseLLMProvider):
                 messages=chat_messages,
                 temperature=kwargs.get("temperature", self.temperature),
             )
-
-            tokens_in = response.usage.input_tokens
-            tokens_out = response.usage.output_tokens
-
+            t_in = response.usage.input_tokens
+            t_out = response.usage.output_tokens
             return LLMResponse(
-                output=response.content[0].text,
-                tokens_input=tokens_in,
-                tokens_output=tokens_out,
-                model=self.model,
-                cost_estimate=self.estimate_cost(tokens_in, tokens_out),
+                output=response.content[0].text, tokens_input=t_in, tokens_output=t_out,
+                model=self.model, cost_estimate=self.estimate_cost(t_in, t_out),
             )
         except Exception as e:
             return LLMResponse(output="", error=str(e), model=self.model)
@@ -66,5 +52,5 @@ class AnthropicProvider(BaseLLMProvider):
         return "anthropic"
 
     def estimate_cost(self, tokens_input: int, tokens_output: int) -> float:
-        pricing = ANTHROPIC_PRICING.get(self.model, {"input": 0, "output": 0})
-        return (tokens_input / 1000 * pricing["input"]) + (tokens_output / 1000 * pricing["output"])
+        p = ANTHROPIC_PRICING.get(self.model, {"input": 0, "output": 0})
+        return (tokens_input / 1000 * p["input"]) + (tokens_output / 1000 * p["output"])

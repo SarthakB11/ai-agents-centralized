@@ -31,26 +31,11 @@ class BaseLLMProvider(ABC):
 
     @abstractmethod
     def generate(self, messages: List[Dict[str, str]], **kwargs) -> LLMResponse:
-        """
-        Generate a response from the LLM.
-
-        Args:
-            messages: List of message dicts with 'role' and 'content' keys.
-            **kwargs: Provider-specific options.
-
-        Returns:
-            LLMResponse with standardized fields.
-        """
         pass
 
     @abstractmethod
     def get_provider_name(self) -> str:
-        """Return the provider name (e.g., 'openai', 'gemini', 'anthropic')."""
         pass
 
     def estimate_cost(self, tokens_input: int, tokens_output: int) -> float:
-        """
-        Override in subclass with provider-specific pricing.
-        Returns estimated cost in USD.
-        """
         return 0.0

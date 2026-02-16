@@ -1,31 +1,19 @@
-# Core
-fastapi
-uvicorn
-pydantic
-pydantic-settings
-python-dotenv
-PyYAML
-httpx
+# Starter Agent Requirements
+# The SDK provides all framework functionality.
+# Only list agent-specific dependencies here.
 
-# LLM Providers (install only the one you need)
-# openai
-# google-generativeai
-# anthropic
+# Core SDK (install from local path or internal PyPI)
+-e ../ai_agent_sdk
 
-# Integrations (install only the ones you need)
-# slack_bolt
+# FastAPI for serving
+fastapi>=0.100.0
+uvicorn>=0.23.0
 
-# Memory
-# redis
+# Choose your LLM provider (uncomment one):
+# openai>=1.0
+# google-generativeai>=0.3
+# anthropic>=0.20
 
-# Testing
-pytest
-pytest-mock
-pytest-asyncio
-
-# Security & Quality
-flake8
-bandit
-
-# Observability
-prometheus-client
+# Agent-specific dependencies (add yours below):
+# pandas
+# beautifulsoup4

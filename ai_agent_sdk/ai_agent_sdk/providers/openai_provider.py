@@ -1,19 +1,13 @@
-"""
-OpenAI LLM Provider.
-
-Supports: GPT-4o, GPT-4o-mini, GPT-4, GPT-3.5-turbo, o1, o3-mini, etc.
-"""
+"""OpenAI LLM Provider."""
 
 from typing import List, Dict
-from app.services.base_provider import BaseLLMProvider, LLMResponse
+from ai_agent_sdk.providers.base_provider import BaseLLMProvider, LLMResponse
 
 try:
     import openai
 except ImportError:
     openai = None
 
-
-# Approximate pricing per 1K tokens (USD) — update as pricing changes
 OPENAI_PRICING = {
     "gpt-4o": {"input": 0.0025, "output": 0.01},
     "gpt-4o-mini": {"input": 0.00015, "output": 0.0006},
@@ -25,8 +19,6 @@ OPENAI_PRICING = {
 
 
 class OpenAIProvider(BaseLLMProvider):
-    """OpenAI LLM Provider."""
-
     def __init__(self, api_key: str, model: str = "gpt-4o-mini", **kwargs):
         super().__init__(model=model, **kwargs)
         if openai is None:
@@ -36,21 +28,16 @@ class OpenAIProvider(BaseLLMProvider):
     def generate(self, messages: List[Dict[str, str]], **kwargs) -> LLMResponse:
         try:
             response = self.client.chat.completions.create(
-                model=self.model,
-                messages=messages,
+                model=self.model, messages=messages,
                 temperature=kwargs.get("temperature", self.temperature),
                 max_tokens=kwargs.get("max_tokens", self.max_tokens),
             )
-
-            tokens_in = response.usage.prompt_tokens
-            tokens_out = response.usage.completion_tokens
-
+            t_in = response.usage.prompt_tokens
+            t_out = response.usage.completion_tokens
             return LLMResponse(
                 output=response.choices[0].message.content,
-                tokens_input=tokens_in,
-                tokens_output=tokens_out,
-                model=self.model,
-                cost_estimate=self.estimate_cost(tokens_in, tokens_out),
+                tokens_input=t_in, tokens_output=t_out,
+                model=self.model, cost_estimate=self.estimate_cost(t_in, t_out),
             )
         except Exception as e:
             return LLMResponse(output="", error=str(e), model=self.model)
@@ -59,5 +46,5 @@ class OpenAIProvider(BaseLLMProvider):
         return "openai"
 
     def estimate_cost(self, tokens_input: int, tokens_output: int) -> float:
-        pricing = OPENAI_PRICING.get(self.model, {"input": 0, "output": 0})
-        return (tokens_input / 1000 * pricing["input"]) + (tokens_output / 1000 * pricing["output"])
+        p = OPENAI_PRICING.get(self.model, {"input": 0, "output": 0})
+        return (tokens_input / 1000 * p["input"]) + (tokens_output / 1000 * p["output"])
