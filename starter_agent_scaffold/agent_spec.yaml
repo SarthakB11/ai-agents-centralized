@@ -1,0 +1,45 @@
+
+agent_name: starter-agent
+version: 1.0.0
+commit_hash: HEAD
+owner: platform-team
+business_owner: platform-lead
+description: A starter template complying with organizational standards.
+agent_type: chatbot
+
+inputs:
+  - name: user_message
+    type: text
+
+outputs:
+  - name: agent_response
+    type: text
+
+llm_provider:
+  name: openai
+  model: gpt-4o-mini
+  temperature: 0.7
+  max_tokens: 500
+
+memory:
+  type: short_term
+  store: redis
+
+tools:
+  - name: calculator
+    description: Basic arithmetic operations
+
+secrets:
+  - OPENAI_API_KEY
+  - REDIS_URL
+
+guardrails:
+  pii_filter: true
+  hallucination_detection: false
+  prompt_versioning: true
+
+evaluation:
+  metrics:
+    - accuracy
+    - latency
+    - cost_per_request

@@ -1,0 +1,11 @@
+
+fastapi
+uvicorn
+pydantic
+openai
+redis
+python-dotenv
+promethus-client
+pytest
+pytest-mock
+PyYAML
