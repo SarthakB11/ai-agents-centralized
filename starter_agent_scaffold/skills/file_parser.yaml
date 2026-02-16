@@ -1,0 +1,10 @@
+# File Parser Tool
+# Extract text from PDF, DOCX, CSV, Excel, and TXT files.
+
+name: file_parser
+type: tool
+module: ai_agent_sdk.tools.file_parser
+enabled: true
+description: Parse and extract text from PDF, DOCX, CSV, Excel, and TXT files.
+config:
+  max_pages: 20

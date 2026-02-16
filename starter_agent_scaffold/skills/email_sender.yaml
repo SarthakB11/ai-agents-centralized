@@ -1,0 +1,11 @@
+# Email Sender Tool
+# Send emails via SMTP.
+# Requires SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD in .env
+
+name: email_sender
+type: tool
+module: ai_agent_sdk.tools.email_sender
+enabled: false   # ← Disabled by default, flip to true when SMTP is configured
+description: Send emails via SMTP with plain text or HTML content.
+config:
+  max_recipients: 5

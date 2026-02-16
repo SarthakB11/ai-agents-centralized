@@ -1,60 +1,70 @@
 """
 Starter Agent — Example agent built on the AI Agent SDK.
 
-This file demonstrates how to create a custom agent by extending BaseAgent.
-Just override the hooks you need: setup(), before_llm(), after_llm(), route_tools().
+Skills are auto-loaded from the skills/ directory.
+    Add a skill:    drop a YAML file in skills/
+    Remove a skill: delete the YAML file
+    Disable:        set `enabled: false` in the YAML
+
+This agent only contains YOUR custom logic. Everything else
+(LLM providers, guardrails, observability, tools) comes from the SDK.
 """
 
 from ai_agent_sdk import BaseAgent
-from ai_agent_sdk.tools import calculator, web_search
+from typing import Optional, Dict, List
 
 
 class StarterAgent(BaseAgent):
     """
-    Example agent that demonstrates the SDK pattern.
+    Example agent demonstrating the SDK skills pattern.
 
-    To build your own agent:
-    1. Subclass BaseAgent
-    2. Override setup() to register your tools
-    3. Override route_tools() to implement your tool selection logic
-    4. Optionally override before_llm() / after_llm() for custom processing
+    All tools, integrations, and functions listed in skills/*.yaml
+    are auto-registered by BaseAgent. You only need to:
+      1. Override route_tools() to implement your selection logic
+      2. Optionally override before_llm() / after_llm() for custom processing
+      3. Optionally override setup() to register tools NOT in skills/
     """
 
-    def setup(self):
-        """Register tools this agent can use."""
-        self.register_tool("calculator", calculator)
-        self.register_tool("web_search", web_search)
-
-    def route_tools(self, input_text: str):
-        """Simple keyword-based tool routing. Replace with LLM-based routing for production."""
+    def route_tools(self, input_text: str, available_tools: List[str] = None) -> Optional[Dict]:
+        """
+        Simple keyword-based tool routing.
+        Replace with LLM-based routing (function calling) for production.
+        """
         input_lower = input_text.lower()
+        available = available_tools or []
 
-        if any(kw in input_lower for kw in ["calculate", "add", "subtract", "multiply", "divide"]):
-            return self._handle_calculator(input_text)
+        # Calculator
+        if "calculator" in available:
+            if any(kw in input_lower for kw in ["calculate", "add", "subtract", "multiply", "divide"]):
+                return self._handle_calculator(input_text)
 
-        if any(kw in input_lower for kw in ["search", "find", "look up", "what is"]):
-            return {"tool": "web_search", "query": input_text}
+        # Web Search
+        if "web_search" in available:
+            if any(kw in input_lower for kw in ["search", "find", "look up", "what is", "who is"]):
+                result = self.tool_router.call("web_search", query=input_text)
+                return {"tool": "web_search", "query": input_text, "result": result}
+
+        # HTTP Request
+        if "http_request" in available:
+            if any(kw in input_lower for kw in ["fetch", "get url", "call api", "http"]):
+                return {"tool": "http_request", "note": "provide URL to make request"}
+
+        # File Parser
+        if "file_parser" in available:
+            if any(kw in input_lower for kw in ["parse file", "read pdf", "extract text"]):
+                return {"tool": "file_parser", "note": "provide file path to parse"}
 
         return None  # No tool needed — go straight to LLM
 
-    def _handle_calculator(self, text: str):
-        """Parse calculator commands."""
+    def _handle_calculator(self, text: str) -> Optional[Dict]:
+        """Parse and execute calculator commands."""
         parts = text.lower().split()
-        operations = {"add": "add", "subtract": "subtract", "multiply": "multiply", "divide": "divide"}
+        ops = {"add": "add", "subtract": "subtract", "multiply": "multiply", "divide": "divide"}
 
         for word in parts:
-            if word in operations:
+            if word in ops:
                 numbers = [float(p) for p in parts if p.replace(".", "").replace("-", "").isdigit()]
                 if len(numbers) >= 2:
-                    result = self.tool_router.call("calculator", operation=operations[word], a=numbers[0], b=numbers[1])
+                    result = self.tool_router.call("calculator", operation=ops[word], a=numbers[0], b=numbers[1])
                     return {"tool": "calculator", "operation": word, "result": result}
-
         return None
-
-    def before_llm(self, input_text: str, context):
-        """Optional: modify input before sending to LLM."""
-        return input_text
-
-    def after_llm(self, response):
-        """Optional: modify output after LLM response."""
-        return response

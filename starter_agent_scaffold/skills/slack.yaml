@@ -1,0 +1,11 @@
+# Slack Bot Integration
+# Socket Mode Slack bot.
+# Requires: SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET, SLACK_APP_TOKEN in .env
+
+name: slack
+type: integration
+module: ai_agent_sdk.integrations.slack
+enabled: false   # ← Enable when Slack is configured
+description: Slack bot via Socket Mode — responds to mentions and DMs.
+config:
+  respond_to_dms: true

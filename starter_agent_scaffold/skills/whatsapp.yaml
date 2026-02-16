@@ -1,0 +1,11 @@
+# WhatsApp Integration
+# WhatsApp Cloud API webhook handler.
+# Requires: WHATSAPP_VERIFY_TOKEN, WHATSAPP_PHONE_NUMBER_ID, WHATSAPP_API_TOKEN in .env
+
+name: whatsapp
+type: integration
+module: ai_agent_sdk.integrations.whatsapp
+enabled: false   # ← Enable when WhatsApp is configured
+description: Two-way WhatsApp messaging via the Cloud API.
+config:
+  prefix: /webhook/whatsapp

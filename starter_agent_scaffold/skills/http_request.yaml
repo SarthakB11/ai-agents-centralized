@@ -1,0 +1,10 @@
+# HTTP Request Tool
+# Make external API calls (GET, POST, PUT, PATCH).
+
+name: http_request
+type: tool
+module: ai_agent_sdk.tools.http_request
+enabled: true
+description: Make HTTP requests to external REST APIs.
+config:
+  default_timeout: 10

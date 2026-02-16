@@ -1,0 +1,11 @@
+# Database Lookup Tool
+# Queries PostgreSQL or MySQL databases (read-only).
+# Requires DATABASE_URL in .env
+
+name: database_lookup
+type: tool
+module: ai_agent_sdk.tools.database_lookup
+enabled: false   # ← Disabled by default, flip to true when database is configured
+description: Execute read-only SQL queries against PostgreSQL or MySQL databases.
+config:
+  max_rows: 100
