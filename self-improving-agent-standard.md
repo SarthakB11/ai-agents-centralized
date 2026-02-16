@@ -95,6 +95,8 @@ Steps:
 7. Monitor
 8. Promote or rollback
 
+Updates must be rate-limited (e.g., max 1 update per 24h) to prevent "catastrophic forgetting" or oscillation.
+
 ---
 
 # 6️⃣ Dynamic Routing Optimization
@@ -200,7 +202,11 @@ Track:
 | L2    | Suggested improvements                 |
 | L3    | Auto A/B testing                       |
 | L4    | Controlled auto-promotion              |
+| L3    | Auto A/B testing                       |
+| L4    | Controlled auto-promotion              |
 | L5    | Self-optimizing mesh-wide intelligence |
+
+**Note**: L3+ autonomy requires a mandatory **Human Checkpoint** where a human reviews a weekly summary of changes.
 
 ---
 

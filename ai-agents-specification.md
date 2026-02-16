@@ -48,6 +48,7 @@ Every agent must have a `agent_spec.yaml` file:
 ```yaml
 agent_name: string
 version: semver
+commit_hash: git_sha # [NEW] Track exact build state
 owner: team_name
 business_owner: person
 description: short description
@@ -74,6 +75,11 @@ memory:
 tools:
   - name: tool_name
     description: purpose
+
+secrets: # [NEW] Explicitly declare required secrets (injected via ENV)
+  - OPENAI_API_KEY
+  - DB_PASSWORD
+  - PINECONE_API_KEY
 
 guardrails:
   pii_filter: true/false
@@ -119,6 +125,7 @@ agent-name/
 ├── tests/
 │   ├── test_agent.py
 │   ├── test_tools.py
+│   └── integration_tests/ # [NEW] mocked external dependencies
 │   └── eval_dataset.json
 │
 ├── evaluation/
@@ -231,6 +238,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: pytest tests/
+
+  integration-tests: # [NEW] Verify logic flow with mocks
+    runs-on: ubuntu-latest
+    steps:
+      - run: pytest tests/integration_tests/
 
   eval-benchmark:
     runs-on: ubuntu-latest
@@ -356,6 +368,7 @@ class LLMClient:
 * Access control per agent
 * Output validation schema
 * Human fallback path (if confidence < threshold)
+* Secrets Management: NEVER store keys in code/yaml. Use ENV vars.
 
 ---
 

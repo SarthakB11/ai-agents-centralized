@@ -198,6 +198,8 @@ Mandatory:
 * Secret vault integration
 * Input sanitization
 * Output schema validation
+* Container Vulnerability Scanning (Trivy/Clair) in CI/CD
+* Dependency Scanning (Snyk/Safety)
 
 High-risk agents must support:
 
@@ -326,6 +328,9 @@ Before onboarding external provider:
 * Cost predictability check
 
 No direct external API calls allowed without LLM Gateway approval.
+
+## 15.1 Shadow AI Detection
+Network logs must be scanned for unauthorized outbound traffic to known AI API endpoints (e.g., OpenAI, Anthropic) to detect "Shadow AI" usage.
 
 ---
 

@@ -140,8 +140,15 @@ Each request must:
   * LLM calls
   * Tool calls
   * DB reads
+* Track sub-calls:
+  * LLM calls
+  * Tool calls
+  * DB reads
   * Vector searches
+  * Async events (Message Queues)
 * Log execution timeline
+
+Correlation IDs (`trace_id`, `span_id`) must be propagated across all service boundaries, including async message brokers.
 
 Trace must show:
 
@@ -203,6 +210,9 @@ Warning Alerts:
 * Cost anomaly
 * Token spike
 * Evaluation drop
+
+## 9.1 User Feedback Signal
+Standardized feedback (👍/👎) must be captured and linked to `request_id` for RLHF/Self-Improvement loops.
 
 ---
 

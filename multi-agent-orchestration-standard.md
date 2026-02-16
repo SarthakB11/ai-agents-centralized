@@ -135,6 +135,9 @@ Private Memory:
 
 Memory access must be versioned.
 
+## 7.1 State Persistence
+Orchestration state (e.g., active step, accumulated context) must be persisted (e.g., Redis/Postgres) to allow resume-on-failure.
+
 ---
 
 # 8️⃣ Failure Handling
@@ -150,6 +153,12 @@ If Evaluator rejects:
 
 * Trigger refinement loop
 * Or escalate
+
+## 8.1 Conflict Resolution
+If specialists disagree, Orchestrator applies:
+1. **Confidence Voting**: Highest confidence wins.
+2. **Source Authority**: Predetermined reliable source wins.
+3. **Recency**: Newer data wins.
 
 Max 3 total loops allowed.
 

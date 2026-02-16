@@ -77,6 +77,7 @@ Where:
                      │ Tool Services          │
                      │ Observability Stack    │
                      │ Security Layer         │
+                     │ Service Mesh (Istio)   │ # [NEW] Transparent mTLS/Retry
                      └────────────────────────┘
 ```
 
@@ -217,6 +218,7 @@ Mesh must support:
 * Canary releases
 * Blue-green deployments
 * Rollback automation
+* Dead Letter Queue (DLQ) for unrecoverable errors
 
 ---
 
