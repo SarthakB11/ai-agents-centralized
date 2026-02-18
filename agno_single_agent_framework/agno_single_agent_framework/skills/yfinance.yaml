@@ -1,0 +1,5 @@
+# Yahoo Finance — Stock market data, no API key required
+# Install: pip install yfinance
+# Provides: stock prices, company info, analyst recommendations, news
+name: yfinance
+enabled: false

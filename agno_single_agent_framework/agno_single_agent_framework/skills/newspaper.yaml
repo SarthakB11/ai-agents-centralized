@@ -1,0 +1,4 @@
+# Newspaper4k — Fetch and parse news articles via Agno built-in
+# Install: pip install newspaper4k lxml_html_clean
+name: newspaper
+enabled: false

@@ -1,10 +1,9 @@
 """
 Starter Agent — Example agent built on the AI Agent SDK.
 
-Skills are auto-loaded from the skills/ directory.
-    Add a skill:    drop a YAML file in skills/
-    Remove a skill: delete the YAML file
-    Disable:        set `enabled: false` in the YAML
+Skills are auto-loaded from the framework package's skills/ directory.
+    Enable a skill:  set `enabled: true` in the skill's YAML file
+    Disable a skill: set `enabled: false` in the skill's YAML file
 
 This agent only contains YOUR custom logic. Everything else
 (LLM providers, guardrails, observability, tools) comes from the SDK.

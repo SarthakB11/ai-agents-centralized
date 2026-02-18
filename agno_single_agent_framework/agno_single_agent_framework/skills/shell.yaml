@@ -1,0 +1,4 @@
+# Shell — Execute shell commands via Agno built-in
+# WARNING: Only enable in sandboxed/trusted environments
+name: shell
+enabled: false

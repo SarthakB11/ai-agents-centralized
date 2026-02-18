@@ -1,0 +1,4 @@
+# File Parser — Extract text from PDF, DOCX, CSV, Excel, TXT
+# Install: pip install PyPDF2 python-docx openpyxl pandas
+name: file_parser
+enabled: false

@@ -1,0 +1,5 @@
+# Resend — Email API via Agno built-in
+# Requires: RESEND_API_KEY environment variable
+# Install: pip install resend
+name: resend
+enabled: false

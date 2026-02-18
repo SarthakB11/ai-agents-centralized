@@ -1,0 +1,3 @@
+# HTTP Request — GET/POST/PUT requests to external APIs
+name: http_request
+enabled: true

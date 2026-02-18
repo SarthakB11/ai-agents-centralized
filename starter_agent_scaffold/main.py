@@ -19,7 +19,6 @@ logger = logging.getLogger(__name__)
 agent = StarterAgent(
     name="starter-agent",
     spec_path="agent_spec.yaml",
-    skills_dir="skills",
     enable_guardrails=True,
     enable_observability=True,
     log_level="INFO",

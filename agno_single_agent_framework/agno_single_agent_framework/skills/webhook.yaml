@@ -1,5 +1,5 @@
 # Webhook — inbound webhook endpoint
 name: webhook
-enabled: true
+enabled: false
 config:
   prefix: /webhook

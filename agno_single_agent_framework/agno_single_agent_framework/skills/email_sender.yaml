@@ -1,0 +1,4 @@
+# Email Sender — Send emails via SMTP
+# Set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD in .env
+name: email_sender
+enabled: false

@@ -1,0 +1,5 @@
+# Tavily — AI-optimized search via Agno built-in
+# Requires: TAVILY_API_KEY environment variable
+# Install: pip install tavily-python
+name: tavily
+enabled: false

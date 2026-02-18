@@ -1,0 +1,5 @@
+# Database Lookup — Read-only SQL queries (PostgreSQL/MySQL)
+# Set DATABASE_URL in .env
+# Install: pip install psycopg2-binary (PostgreSQL) or pymysql (MySQL)
+name: database_lookup
+enabled: false

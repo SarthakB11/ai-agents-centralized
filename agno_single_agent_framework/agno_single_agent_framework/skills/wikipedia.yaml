@@ -1,0 +1,5 @@
+# Wikipedia — Agno built-in, no API key required
+# Install: pip install wikipedia
+# Search and retrieve Wikipedia articles
+name: wikipedia
+enabled: true

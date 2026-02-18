@@ -1,0 +1,4 @@
+# HackerNews — Agno built-in, no API key required
+# Fetches top stories, newest posts, and story details
+name: hackernews
+enabled: true

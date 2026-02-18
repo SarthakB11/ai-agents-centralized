@@ -1,0 +1,4 @@
+# Web Search — Tavily or SerpAPI (requires API key)
+# Set TAVILY_API_KEY or SERP_API_KEY in .env
+name: web_search
+enabled: true

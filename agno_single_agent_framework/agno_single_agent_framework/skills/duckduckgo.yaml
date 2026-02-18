@@ -1,0 +1,5 @@
+# DuckDuckGo Search — Agno built-in, no API key required
+# Install: pip install duckduckgo-search
+# Great for development and privacy-respecting search
+name: duckduckgo
+enabled: true

@@ -1,0 +1,4 @@
+# Python Execution — Run Python code via Agno built-in
+# WARNING: Only enable in sandboxed/trusted environments
+name: python_exec
+enabled: false

@@ -1,0 +1,5 @@
+# ArXiv — Academic paper search, no API key required
+# Install: pip install arxiv
+# Search and retrieve academic research papers
+name: arxiv
+enabled: false

@@ -1,0 +1,5 @@
+# Exa AI — Semantic search via Agno built-in
+# Requires: EXA_API_KEY environment variable
+# Install: pip install exa-py
+name: exa
+enabled: false

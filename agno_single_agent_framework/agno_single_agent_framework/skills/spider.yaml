@@ -1,0 +1,15 @@
+name: spider
+type: tool
+enabled: false
+description: >
+  Spider web crawler — crawls entire websites and extracts clean text content.
+  Useful for building knowledge bases from websites or deep-crawling documentation.
+
+# Requirements:
+#   pip install spider-client
+#   SPIDER_API_KEY environment variable must be set
+
+# To enable:
+#   1. pip install spider-client
+#   2. Set SPIDER_API_KEY in your .env
+#   3. Change enabled: true

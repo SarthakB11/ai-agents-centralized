@@ -1,0 +1,4 @@
+# GitHub — Interact with GitHub repositories via Agno built-in
+# Requires: GITHUB_TOKEN environment variable
+name: github
+enabled: false

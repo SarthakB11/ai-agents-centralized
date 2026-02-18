@@ -1,0 +1,4 @@
+# Calculator — Arithmetic operations
+# Provides: add, subtract, multiply, divide
+name: calculator
+enabled: true
