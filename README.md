@@ -2,7 +2,7 @@
 
 This repository defines the standardized AI Agent Architecture,
 Governance Framework, Risk Controls, and Compliance Model
-for all AI products built by Beatroute.
+for the AI products I build.
 
 ## Repository Structure
 
